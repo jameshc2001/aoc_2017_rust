@@ -1,20 +1,16 @@
 use std::collections::HashMap;
-use crate::shared::coord_2d::Coord2D;
+
+use crate::shared::coord_2d::{ALL_DIRECTIONS, Coord2D, DOWN, LEFT, ORIGIN, RIGHT, UP};
 
 fn distance_to_access_port(target_num: i32) -> i32 {
-    let right = &Coord2D::new(1, 0);
-    let up = &Coord2D::new(0, 1);
-    let left = &Coord2D::new(-1, 0);
-    let down = &Coord2D::new(0, -1);
-    let directions = vec![right, up, left, down];
-
+    let ordered_directions = vec![&RIGHT, &UP, &LEFT, &DOWN];
     let mut current_num = 1;
-    let mut current_location = Coord2D::new(0, 0);
+    let mut current_location = ORIGIN;
     let mut step_size = 0;
 
     while current_num != target_num {
-        for direction in &directions {
-            if *direction == right || *direction == left { step_size += 1; }
+        for direction in &ordered_directions {
+            if *direction == &RIGHT || *direction == &LEFT { step_size += 1; }
             if step_size + current_num >= target_num { step_size = target_num - current_num; }
 
             current_location = current_location + &(*direction * step_size);
@@ -24,24 +20,19 @@ fn distance_to_access_port(target_num: i32) -> i32 {
         }
     }
 
-    return current_location.manhattan_distance(&Coord2D::new(0, 0));
+    return current_location.manhattan_distance(&ORIGIN);
 }
 
 fn next_largest(target_num: i32) -> i32 {
-    let right = &Coord2D::new(1, 0);
-    let up = &Coord2D::new(0, 1);
-    let left = &Coord2D::new(-1, 0);
-    let down = &Coord2D::new(0, -1);
-    let directions = vec![right, up, left, down];
-
-    let mut current_location = Coord2D::new(0, 0);
+    let ordered_directions = vec![&RIGHT, &UP, &LEFT, &DOWN];
+    let mut current_location = ORIGIN;
     let mut step_size = 0;
     let mut grid = HashMap::new();
     grid.insert(current_location, 1);
 
     loop {
-        for direction in &directions {
-            if *direction == right || *direction == left { step_size += 1; }
+        for direction in &ordered_directions {
+            if *direction == &RIGHT || *direction == &LEFT { step_size += 1; }
 
             for _ in 0..step_size {
                 current_location = current_location + direction;
@@ -54,16 +45,7 @@ fn next_largest(target_num: i32) -> i32 {
 }
 
 fn get_num_from_neighbours(grid: &HashMap<Coord2D, i32>, location: &Coord2D) -> i32 {
-    vec![
-        Coord2D::new(1, 0),
-        Coord2D::new(-1, 0),
-        Coord2D::new(0, 1),
-        Coord2D::new(0, -1),
-        Coord2D::new(1, 1),
-        Coord2D::new(-1, -1),
-        Coord2D::new(-1, 1),
-        Coord2D::new(1, -1),
-    ].iter().map(|direction| {
+    ALL_DIRECTIONS.iter().map(|direction| {
         grid.get(&(location + direction)).unwrap_or(&0)
     }).sum()
 }
@@ -71,14 +53,6 @@ fn get_num_from_neighbours(grid: &HashMap<Coord2D, i32>, location: &Coord2D) -> 
 #[cfg(test)]
 mod tests {
     use super::*;
-
-    #[test]
-    fn can_add_coords() {
-        let coord_1 = Coord2D::new(10, 25);
-        let coord_2 = Coord2D::new(-5, 2);
-        let expected = Coord2D::new(5, 27);
-        assert_eq!(coord_1 + &coord_2, expected);
-    }
 
     #[test]
     fn easy_distances() {
