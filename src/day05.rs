@@ -7,18 +7,16 @@ where
     let mut steps = 0;
 
     loop {
-        match usize::try_from(location) {
-            Ok(index) => {
-                match instructions.get(index) {
-                    Some(instruction) => {
-                        location = location + instruction;
-                        instructions[index] = rule(instruction);
-                        steps = steps + 1;
-                    },
-                    None => return steps
-                }
+        if let Ok(index) = usize::try_from(location) {
+            if let Some(instruction) = instructions.get(index) {
+                location = location + instruction;
+                instructions[index] = rule(instruction);
+                steps = steps + 1;
+            } else {
+                return steps
             }
-            Err(_) => return steps
+        } else {
+            return steps
         }
     }
 }
