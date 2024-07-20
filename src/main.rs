@@ -4,6 +4,7 @@ mod day03;
 mod shared;
 mod day04;
 mod day05;
+mod day06;
 
 fn main() {
     println!("Hello, world!");
