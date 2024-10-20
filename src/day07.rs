@@ -1,5 +1,8 @@
 use regex::Regex;
 use std::collections::HashSet;
+use once_cell::sync::Lazy;
+
+static REGEX: Lazy<Regex> = Lazy::new(|| { Regex::new("\\w+").unwrap() });
 
 #[derive(PartialEq, Debug, Clone, Eq)]
 struct Tower {
@@ -9,15 +12,14 @@ struct Tower {
 }
 
 fn get_towers_from_input(input: &str) -> Vec<Tower> {
+    let regex = Regex::new("\\w+").unwrap();
     input.split("\n")
         .map(|line| { get_tower_from_line(line) })
         .collect::<Vec<_>>()
 }
 
 fn get_tower_from_line(line: &str) -> Tower {
-    let regex = Regex::new("\\w+").unwrap();
-
-    let matches = regex.find_iter(line).collect::<Vec<_>>();
+    let matches = REGEX.find_iter(line).collect::<Vec<_>>();
     let name = matches[0].as_str().to_string();
     let weight = matches[1].as_str().parse::<i32>().unwrap();
     let sub_tower_names = matches.iter().skip(2).map(|m| { m.as_str().to_string() }).collect::<HashSet<_>>();
@@ -25,10 +27,24 @@ fn get_tower_from_line(line: &str) -> Tower {
     Tower { name, weight, sub_tower_names }
 }
 
+fn get_bottom_tower(input: &str) -> String {
+    let towers = get_towers_from_input(input);
+
+    let sub_towers = towers.iter()
+        .flat_map(|t| { &t.sub_tower_names })
+        .collect::<HashSet<_>>();
+    let all_towers = towers.iter()
+        .map(|t| { &t.name })
+        .collect::<HashSet<_>>();
+
+    all_towers.difference(&sub_towers).next().unwrap().to_string()
+}
+
 
 
 #[cfg(test)]
 mod tests {
+    use std::fs;
     use super::*;
 
     #[test]
@@ -54,6 +70,25 @@ mod tests {
 
     #[test]
     fn can_get_bottom_tower() {
+        let input = "pbga (66)
+            xhth (57)
+            ebii (61)
+            havc (66)
+            ktlj (57)
+            fwft (72) -> ktlj, cntj, xhth
+            qoyq (66)
+            padx (45) -> pbga, havc, qoyq
+            tknk (41) -> ugml, padx, fwft
+            jptl (61)
+            ugml (68) -> gyxo, ebii, jptl
+            gyxo (61)
+            cntj (57)";
+        assert_eq!("tknk", get_bottom_tower(input));
+    }
 
+    #[test]
+    fn can_get_answer_for_part_1() {
+        let input = fs::read_to_string("inputs/day07.txt").unwrap();
+        assert_eq!("azqje", get_bottom_tower(&input));
     }
 }
