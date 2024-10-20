@@ -12,7 +12,6 @@ struct Tower {
 }
 
 fn get_towers_from_input(input: &str) -> Vec<Tower> {
-    let regex = Regex::new("\\w+").unwrap();
     input.split("\n")
         .map(|line| { get_tower_from_line(line) })
         .collect::<Vec<_>>()
