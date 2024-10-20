@@ -39,6 +39,10 @@ fn get_bottom_tower(input: &str) -> String {
     all_towers.difference(&sub_towers).next().unwrap().to_string()
 }
 
+//part 2: recursive function for creating a graph (tree) that has the total weight at each tower.
+//starting at the base tower, look at the sub_towers and choose the one with the different weight
+//go to this tower and repeat until no differing weight found. This means you are at the 'bad' tower.
+//consider the tower before this one to determine the correct weight
 
 
 #[cfg(test)]
