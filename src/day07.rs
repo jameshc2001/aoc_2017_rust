@@ -94,7 +94,7 @@ fn get_correct_weight_for_bad_tower(input: &str) -> i32 {
         }
     }
 
-    *answers.iter().min().unwrap() //bad
+    *answers.iter().min().unwrap() //safe assumption that lowest weight is the bad tower
 }
 
 //part 2: recursive function for creating a graph (tree) that has the total weight at each tower.
