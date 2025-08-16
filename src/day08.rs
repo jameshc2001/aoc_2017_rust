@@ -32,8 +32,8 @@ struct Instruction {
 }
 
 impl Instruction {
-    pub fn from_string(input: &str) -> Instruction {
-        let parts: Vec<String> = input.split(" ").collect();
+    pub fn from_string(input: String) -> Instruction {
+        let parts: Vec<String> = input.split(" ").map(String::from).collect();
         let register = parts.get(0).unwrap().clone();
         let action = Action::from_string(parts.get(1).unwrap());
         let amount = parts.get(2).unwrap().parse::<i32>().unwrap();
